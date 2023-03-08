@@ -1,0 +1,12 @@
+/* Show it is fixed to the top */
+.body_style {
+  min-height: 75rem;
+  padding-top: 3.5rem;
+}
+main {
+  margin: 0.5rem;
+}
+
+.extend_background {
+  height: 40rem;
+}
