@@ -1,8 +1,8 @@
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user, login_required
-from __init__ import app, db, login_manager, bcrypt
+from app import app, db, login_manager, bcrypt
 import forms
-from models import User
+from models import User, Note, Category
 
 
 @login_manager.user_loader
@@ -48,7 +48,28 @@ def login():
 @app.route("/base", methods=['GET', 'POST'])
 @login_required
 def base():
-    return render_template('base.html')
+    # form_select_project = forms.Select_project_form()
+    # form_modify_project = forms.Modify_project_form()
+    notes = Note.query.all()
+    categories = Category.query.all()
+    # try:
+    #     selected_project_id = form_select_project.client_to_pick.data.id
+    #     update_project_infor = Project.query.filter(
+    #         Project.id == form_select_project.client_to_pick.data.id).first()
+    # except:
+    #     selected_project_id = 0
+    #     update_project_infor = Project.query.filter(Project.id == 1).first()
+    # if form_modify_project.submit_new_project_data.data and form_modify_project.validate():
+    #     update_project_infor.client = form_modify_project.new_client_name.data
+    #     update_project_infor.pricing_information = form_modify_project.pricing_information.data
+    #     update_project_infor.price_per_month = form_modify_project.price_per_month.data
+    #     update_project_infor.final_payment_claim_date = form_modify_project.final_payment_claim_date.data
+    #     db.session.commit()
+    #     flash(
+    #         f'Modified {Project.query.filter_by(id=form_select_project.client_to_pick.data.id).first().client}\
+    #              data was saved successfully!', 'success')
+    #     return redirect(url_for('base'))
+    return render_template('base.html', notes=notes, categories=categories)
 
 
 @ app.route("/logout", methods=['GET', 'POST'])
