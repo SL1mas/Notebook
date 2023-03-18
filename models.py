@@ -33,6 +33,9 @@ class Category(db.Model):
     def __init__(self, title):
         self.title = title
 
+    def __str__(self):
+        return f'{self.title}'
+
 
 class Note(db.Model):
     __tablename__ = "Notes"

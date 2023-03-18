@@ -28,25 +28,26 @@
   </head>
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
   messages %} {% for category, message in messages %}
-  <div class="alert alert-{{ category }} mb-0 mt-3 text-center">
+  <div class="alert alert-{{ category }} mb-0 mt-4 text-center">
     {{ message }}
   </div>
-  {% endfor %} {% endif %} {% endwith %} {% block main %}
+  {% endfor %} {% endif %} {% endwith %}
   <body class="body_style">
     <nav
-      class="navbar fixed-top navbar-expand-sm pb-1"
+      class="navbar fixed-top navbar-expand-sm"
       style="background-color: #e3f2fd"
       data-bs-theme="light"
     >
       <div class="container-fluid">
-        <a class="navbar-brand" href="#"></a>
-        <img
-          class="mb-1 ms-2"
-          src="/static/logo.png"
-          alt="Logo"
-          width="50"
-          height="50"
-        />
+        <a class="navbar-brand" href="{{ url_for('base') }}">
+          <img
+            class="mb-1 ms-2"
+            src="/static/logo.png"
+            alt="Logo"
+            width="50"
+            height="50"
+          />
+        </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -62,15 +63,14 @@
           class="collapse navbar-collapse nav justify-content-end"
           id="navbarColor03"
         >
-          <ul class="navbar-nav">
+          <ul class="navbar-nav me-5">
             <li class="nav-item text-center">
-              <a class="nav-link" aria-current="page" href="#">User settings</a>
-            </li>
-            <li class="nav-item text-center">
-              <a class="nav-link" href="#">Add project</a>
-            </li>
-            <li class="nav-item text-center">
-              <a class="nav-link" href="#">Statistics</a>
+              <a
+                class="nav-link"
+                aria-current="page"
+                href="{{ url_for('add_category') }}"
+                >Add/modify categories</a
+              >
             </li>
           </ul>
           <a
@@ -81,6 +81,7 @@
         </div>
       </div>
     </nav>
+    {% block main %} 
     {# Main starts here #}
     <main>
       <div class="album py-5 bg-light">
@@ -91,19 +92,20 @@
               <div class="card text-bg-light mb-3 card_body">
                 <div class="card-header">
                   <h5>
-                    {{ note.title[:35] }}{% if note.title|length > 35 %}<a
-                      href="#"
-                      data-toggle="tooltip"
-                      data-bs-placement="right"
-                      title="{{ note.title }}"
-                      >...</a
-                    >
+                    {{ note.title }}
                   </h5>
-                  {% endif %}
+                </div>
+                                <div class="mx-3 pt-1">
+                {% for category in note.categories %}
+                <span class="badge bg-secondary"
+                  >{{ category }}</span
+                >
+                {% endfor %}
+                <hr class="my-1">
                 </div>
                 <div class="card-body">
                   <p class="card-text">
-                    {{ note.text[:100] }}{% if note.text|length > 100 %}<a
+                    {{ note.text[:122] }}{% if note.text|length > 122 %}<a
                       data-bs-toggle="collapse"
                       href="#{{ note.id }}"
                       role="button"
@@ -135,7 +137,6 @@
                         action="{{ url_for('base') }} "
                       >
                         {{ form_edit_note.hidden_tag() }}
- {{ form_delete_note.delete(class="btn btn-outline-secondary") }}
                         <div class="mb-3">
                           {{
                           form_edit_note.new_title.label(class="form-control-label")
@@ -159,7 +160,9 @@
                             id="form_edit_note"
                             name="form_edit_note"
                             class="form-control form-control-lg is-invalid"
-                          >{{ note.text }}</textarea>
+                          >
+{{ note.text }}</textarea
+                          >
                           <div class="invalid-feedback text-start">
                             {% for error in form_edit_note.new_text.errors %}
                             <span>{{ error }}</span>
@@ -170,7 +173,9 @@
                             id="form_edit_note"
                             name="form_edit_note"
                             class="form-control form-control-lg"
-                          >{{ note.text }}</textarea>
+                          >
+{{ note.text }}</textarea
+                          >
                           {% endif %}
                         </div>
                         {{ form_edit_note.update(class="btn
@@ -180,7 +185,66 @@
                           name="note_id"
                           value="{{ note.id }}"
                         />
-                
+                      </form>
+                    </div>
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Categories
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        method="POST"
+                        action="{{ url_for('base') }} "
+                      >
+                        {{ form_add_remove_category.hidden_tag() }}
+                        <div class="form-group text-start mb-2 add_category">
+                          <p>Assign categories:</p>
+                          {{ form_add_remove_category.category(class="form-control
+                          form-control-lg") }} {{
+                          form_add_remove_category.add_category(class="btn
+                          btn-outline-secondary mt-4") }}
+                                                    {{form_add_remove_category.remove_category(class="btn
+                          btn-outline-secondary mt-4") }}
+                        </div>
+
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
+                      </form>
+                    </div>
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Delete
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        style="width: 9rem"
+                        method="POST"
+                        action="{{ url_for('base') }} "
+                      >
+                        {{ form_delete_note.hidden_tag() }}
+                        <div class="d-flex flex-row justify-content-between">
+                          {{ form_delete_note.delete(class="btn
+                          btn-outline-secondary") }}
+                          <button class="btn btn-outline-secondary">No</button>
+                        </div>
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
                       </form>
                     </div>
                   </div>

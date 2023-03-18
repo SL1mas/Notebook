@@ -51,6 +51,7 @@ def base():
     form_edit_note = forms.Edit_note_form()
     form_add_note = forms.Add_note_form()
     form_delete_note = forms.Delete_note_form()
+    form_add_remove_category = forms.Add_remove_category_form()
     notes = Note.query.all()
     categories = Category.query.all()
     note_id = request.values.get("note_id")
@@ -66,6 +67,25 @@ def base():
             f'New note "{note.title}" was saved successfully!', 'success')
         return redirect(url_for('base'))
 
+    if form_add_remove_category.add_category.data and form_add_remove_category.validate():
+        for category in form_add_remove_category.category.data:
+            category = Category.query.get(category.id)
+            edit_note.categories.append(category)
+            db.session.commit()
+        flash(
+            f'Some categories were added to the note "{edit_note.title}".', 'success')
+        return redirect(url_for('base'))
+
+    if form_add_remove_category.remove_category.data and form_add_remove_category.validate():
+        for category in form_add_remove_category.category.data:
+            category = Category.query.get(category.id)
+            for note_category in edit_note.categories:
+                if note_category == category:
+                    edit_note.categories.remove(category)
+                    db.session.commit()
+        flash(f'Note "{edit_note.title}" category list was updated.', 'success')
+        return redirect(url_for('base'))
+
     if form_edit_note.update.data and form_edit_note.validate():
         edit_note.title = form_edit_note.new_title.data
         edit_note.text = new_note_text
@@ -75,13 +95,50 @@ def base():
         return redirect(url_for('base'))
 
     if form_delete_note.delete.data and form_delete_note.validate():
-        note = Note.query.get(note_id).delete()
+        note = Note.query.filter(Note.id == note_id).delete()
         print(note)
         db.session.commit()
         flash(f'{current_user.first_name} note was deleted.', 'success')
         return redirect(url_for('base'))
     return render_template('base.html', notes=notes, categories=categories, form_edit_note=form_edit_note,
-                           form_add_note=form_add_note,  form_delete_note=form_delete_note)
+                           form_add_note=form_add_note, form_delete_note=form_delete_note,
+                           form_add_remove_category=form_add_remove_category)
+
+
+@app.route("/add_category", methods=['GET', 'POST'])
+@login_required
+def add_category():
+    db.create_all()
+    form = forms.Add_category_form()
+    if form.submit_category_data.data and form.validate():
+        category = Category(title=form.title.data)
+        db.session.add(category)
+        db.session.commit()
+        flash(
+            f'Category"{form.title.data}" was added successfully!', 'success')
+        return redirect(url_for('base'))
+    return render_template('add_category.html', form=form)
+
+
+@app.route("/modify_category", methods=['GET', 'POST'])
+@login_required
+def modify_category():
+    categories = Category.query.all()
+    form_modify_category = forms.Modify_category_form()
+    try:
+        selected_category_id = form_modify_category.category.data.id
+        modify_category = Category.query.filter(
+            Category.id == selected_category_id).first()
+    except:
+        selected_category_id = 0
+        modify_category = Category.query.filter(Category.id == 1).first()
+    if form_modify_category.submit_modified_category_data.data and form_modify_category.validate():
+        modify_category.title = form_modify_category.new_title.data
+        db.session.commit()
+        flash(f'Category was updated successfully!', 'success')
+        return redirect(url_for('base'))
+    return render_template('modify_category.html', form_modify_category=form_modify_category, categories=categories,
+                           selected_category_id=selected_category_id)
 
 
 @ app.route("/logout", methods=['GET', 'POST'])
