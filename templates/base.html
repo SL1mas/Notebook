@@ -28,7 +28,9 @@
   </head>
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
   messages %} {% for category, message in messages %}
-  <div class="alert alert-{{ category }} mb-0 text-center">{{ message }}</div>
+  <div class="alert alert-{{ category }} mb-0 mt-3 text-center">
+    {{ message }}
+  </div>
   {% endfor %} {% endif %} {% endwith %} {% block main %}
   <body class="body_style">
     <nav
@@ -38,7 +40,13 @@
     >
       <div class="container-fluid">
         <a class="navbar-brand" href="#"></a>
-        <img class="mb-1" src="#" alt="Logo" width="120" height="25" />
+        <img
+          class="mb-1 ms-2"
+          src="/static/logo.png"
+          alt="Logo"
+          width="50"
+          height="50"
+        />
         <button
           class="navbar-toggler"
           type="button"
@@ -65,39 +73,11 @@
               <a class="nav-link" href="#">Statistics</a>
             </li>
           </ul>
-          <div
-            class="dropdown d-flex align-items-start flex-column align-self-end"
-          >
-            <a
-              href="#"
-              class="ms-5 ps-4 link-dark text-decoration-none dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/6522/6522516.png"
-                alt="profile picture"
-                class="rounded-circle"
-                width="32"
-                height="32"
-                data-toggle="tooltip"
-                data-bs-placement="right"
-                title="{{current_user.first_name }}"
-              />
-            </a>
-            <ul class="dropdown-menu text-small dropdown-menu-end">
-              <li>
-                <a class="dropdown-item" href="#">User view settings</a>
-              </li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li>
-                <a class="dropdown-item" href="{{ url_for('logout') }}"
-                  >Sign out</a
-                >
-              </li>
-            </ul>
-          </div>
+          <a
+            href="{{ url_for('logout') }}"
+            class="btn btn-sm btn-outline-secondary"
+            >Logout
+          </a>
         </div>
       </div>
     </nav>
@@ -108,7 +88,7 @@
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {% for note in notes %}
             <div class="col">
-              <div class="card text-bg-light mb-3" style="max-width: 22rem">
+              <div class="card text-bg-light mb-3 card_body">
                 <div class="card-header">
                   <h5>
                     {{ note.title[:35] }}{% if note.title|length > 35 %}<a
@@ -122,7 +102,6 @@
                   {% endif %}
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">Light card title</h5>
                   <p class="card-text">
                     {{ note.text[:100] }}{% if note.text|length > 100 %}<a
                       data-bs-toggle="collapse"
@@ -140,18 +119,70 @@
                   class="m-3 d-flex justify-content-between align-items-center"
                 >
                   <div class="btn-group">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-secondary"
-                    >
-                      View
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-secondary"
-                    >
-                      Edit
-                    </button>
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Edit
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        style="width: 21rem"
+                        method="POST"
+                        action="{{ url_for('base') }} "
+                      >
+                        {{ form_edit_note.hidden_tag() }}
+ {{ form_delete_note.delete(class="btn btn-outline-secondary") }}
+                        <div class="mb-3">
+                          {{
+                          form_edit_note.new_title.label(class="form-control-label")
+                          }} {% if form_edit_note.new_title.errors %} {{
+                          form_edit_note.new_title( class="form-control
+                          form-control-lg is-invalid", value=note.title) }}
+                          <div class="invalid-feedback text-start">
+                            {% for error in form_edit_note.new_title.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% else %} {{
+                          form_edit_note.new_title(class="form-control
+                          form-control-lg", value=note.title) }} {% endif %}
+                        </div>
+                        <div class="mb-3">
+                          {{
+                          form_edit_note.new_text.label(class="form-control-label")
+                          }} {% if form_edit_note.new_text.errors %}
+                          <textarea
+                            id="form_edit_note"
+                            name="form_edit_note"
+                            class="form-control form-control-lg is-invalid"
+                          >{{ note.text }}</textarea>
+                          <div class="invalid-feedback text-start">
+                            {% for error in form_edit_note.new_text.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% else %}
+                          <textarea
+                            id="form_edit_note"
+                            name="form_edit_note"
+                            class="form-control form-control-lg"
+                          >{{ note.text }}</textarea>
+                          {% endif %}
+                        </div>
+                        {{ form_edit_note.update(class="btn
+                        btn-outline-secondary") }}
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
+                
+                      </form>
+                    </div>
                   </div>
                   <small class="text-muted">9 mins</small>
                 </div>
@@ -160,6 +191,72 @@
             {% endfor %}
           </div>
         </div>
+        <span class="add_note navbar sticky-bottom container float-end me-3">
+          <div class="dropup">
+            <button
+              type="button"
+              class="btn btn-outline-secondary d-flex"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              data-toggle="tooltip"
+              data-bs-placement="left"
+              title="Add note"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                class="bi bi-plus-circle"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                ></path>
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                ></path>
+              </svg>
+            </button>
+            <form
+              class="dropdown-menu dropdown-menu-start p-4 add_note_form"
+              method="POST"
+              action="{{ url_for('base') }} "
+            >
+              {{ form_add_note.hidden_tag() }}
+              <div class="mb-3">
+                {{ form_add_note.title.label(class="form-control-label") }} {%
+                if form_add_note.title.errors %} {{ form_add_note.title(
+                class="form-control form-control-lg is-invalid", value="") }}
+                <div class="invalid-feedback text-start">
+                  {% for error in form_add_note.title.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %} {{ form_add_note.title(class="form-control
+                form-control-lg", value="") }} {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ form_add_note.text.label(class="form-control-label") }} {% if
+                form_add_note.text.errors %} {{ form_add_note.text(
+                class="form-control form-control-lg is-invalid",value="") }}
+                <div class="invalid-feedback text-start">
+                  {% for error in form_add_note.text.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %} {{ form_add_note.text(class="form-control
+                form-control-lg", value="") }} {% endif %}
+              </div>
+              {{ form_add_note.save(class="btn btn-outline-secondary") }}
+              <input
+                type="hidden"
+                name="user_id"
+                value="{{ current_user.id }}"
+              />
+            </form>
+          </div>
+        </span>
       </div>
       <footer
         class="container d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"

@@ -9,3 +9,16 @@ main {
 .extend_background {
   height: 40rem;
 }
+
+.card_body {
+  max-width: 22rem;
+  min-height: 13rem;
+}
+
+.add_note {
+  width: 4rem;
+}
+.add_note_form {
+  width: 21rem;
+  margin-left: -21rem;
+}

@@ -33,3 +33,19 @@ class Login_form(FlaskForm):
     password = PasswordField(
         'Password', [Length(min=5), DataRequired()], render_kw={"placeholder": ""})
     submit = SubmitField('Login')
+
+
+class Edit_note_form(FlaskForm):
+    new_title = StringField("Title:")
+    new_text = TextAreaField("Text:")
+    update = SubmitField("Save")
+
+
+class Add_note_form(FlaskForm):
+    title = StringField("Title:")
+    text = TextAreaField("Text:")
+    save = SubmitField("Save")
+
+
+class Delete_note_form(FlaskForm):
+    delete = SubmitField('Delete')

@@ -48,28 +48,40 @@ def login():
 @app.route("/base", methods=['GET', 'POST'])
 @login_required
 def base():
-    # form_select_project = forms.Select_project_form()
-    # form_modify_project = forms.Modify_project_form()
+    form_edit_note = forms.Edit_note_form()
+    form_add_note = forms.Add_note_form()
+    form_delete_note = forms.Delete_note_form()
     notes = Note.query.all()
     categories = Category.query.all()
-    # try:
-    #     selected_project_id = form_select_project.client_to_pick.data.id
-    #     update_project_infor = Project.query.filter(
-    #         Project.id == form_select_project.client_to_pick.data.id).first()
-    # except:
-    #     selected_project_id = 0
-    #     update_project_infor = Project.query.filter(Project.id == 1).first()
-    # if form_modify_project.submit_new_project_data.data and form_modify_project.validate():
-    #     update_project_infor.client = form_modify_project.new_client_name.data
-    #     update_project_infor.pricing_information = form_modify_project.pricing_information.data
-    #     update_project_infor.price_per_month = form_modify_project.price_per_month.data
-    #     update_project_infor.final_payment_claim_date = form_modify_project.final_payment_claim_date.data
-    #     db.session.commit()
-    #     flash(
-    #         f'Modified {Project.query.filter_by(id=form_select_project.client_to_pick.data.id).first().client}\
-    #              data was saved successfully!', 'success')
-    #     return redirect(url_for('base'))
-    return render_template('base.html', notes=notes, categories=categories)
+    note_id = request.values.get("note_id")
+    user_id = request.values.get("user_id")
+    new_note_text = request.values.get("form_edit_note")
+    edit_note = Note.query.filter(Note.id == note_id).first()
+    if form_add_note.save.data and form_add_note.validate():
+        note = Note(title=form_add_note.title.data,
+                    text=form_add_note.text.data, user_id=user_id)
+        db.session.add(note)
+        db.session.commit()
+        flash(
+            f'New note "{note.title}" was saved successfully!', 'success')
+        return redirect(url_for('base'))
+
+    if form_edit_note.update.data and form_edit_note.validate():
+        edit_note.title = form_edit_note.new_title.data
+        edit_note.text = new_note_text
+        db.session.commit()
+        flash(
+            f'"{edit_note.title}" note data was updated successfully!', 'success')
+        return redirect(url_for('base'))
+
+    if form_delete_note.delete.data and form_delete_note.validate():
+        note = Note.query.get(note_id).delete()
+        print(note)
+        db.session.commit()
+        flash(f'{current_user.first_name} note was deleted.', 'success')
+        return redirect(url_for('base'))
+    return render_template('base.html', notes=notes, categories=categories, form_edit_note=form_edit_note,
+                           form_add_note=form_add_note,  form_delete_note=form_delete_note)
 
 
 @ app.route("/logout", methods=['GET', 'POST'])

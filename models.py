@@ -46,8 +46,9 @@ class Note(db.Model):
     categories = db.relationship(
         'Category', secondary=categories_notes, back_populates="notes")
 
-    def __init__(self, title, text, date=None, picture=None):
+    def __init__(self, title, text, user_id, date=None, picture=None):
         self.title = title
         self.text = text
         self.date = date
         self.picture = picture
+        self.user_id = user_id
