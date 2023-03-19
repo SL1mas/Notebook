@@ -81,27 +81,51 @@
         </div>
       </div>
     </nav>
-    {% block main %} 
-    {# Main starts here #}
+    {% block main %} {# Main starts here #}
     <main>
       <div class="album py-5 bg-light">
         <div class="container">
+          <form method="POST" action="{{ url_for('base') }}">
+            {{ form_modify_category.hidden_tag() }}
+            <div
+              class="form-group text-start d-flex no-wrap align-items-center mb-2"
+            >
+              <div class="d-flex flex-row align-items-center mb-3">
+                {{ form_modify_category.category(class="form-control
+                form-control-lg") }}
+                <p class="mb-0">
+                  {{ form_modify_category.select_category(class="w-40 btn
+                  btn-secondary mb-0 mt-0 ms-2") }}
+                </p>
+              </div>
+            </div>
+          </form>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for note in notes %}
+            {% for note in user_notes %} 
+              {% set ns = namespace(number = 0) %}
+              {% if filter_by_category == none %}
+                {% set list = user_notes %}
+                {% else %}
+                {% set list = note.categories %}
+              {% endif %}
+              {% for show_category in list %} 
+                {% if filter_by_category == none and ns.number == 0  %}
+                  {% set ns.number = ns.number + 1 %}
+                  {% set filter_by_category = show_category %}
+                  {% endif %}
+                {% if show_category == filter_by_category %}
+         
             <div class="col">
               <div class="card text-bg-light mb-3 card_body">
                 <div class="card-header">
-                  <h5>
-                    {{ note.title }}
-                  </h5>
+                  <h5>{{ note.title }}</h5>
                 </div>
-                                <div class="mx-3 pt-1">
-                {% for category in note.categories %}
-                <span class="badge bg-secondary"
-                  >{{ category }}</span
-                >
-                {% endfor %}
-                <hr class="my-1">
+                <div class="mx-3 pt-1">
+                  {% for category in note.categories %}
+                  <span class="badge bg-secondary">{{ category }}</span>
+                  {% endfor %} {% if note.categories|length > 0 %}
+                  <hr class="my-1" />
+                  {% endif %}
                 </div>
                 <div class="card-body">
                   <p class="card-text">
@@ -204,11 +228,12 @@
                         {{ form_add_remove_category.hidden_tag() }}
                         <div class="form-group text-start mb-2 add_category">
                           <p>Assign categories:</p>
-                          {{ form_add_remove_category.category(class="form-control
+                          {{
+                          form_add_remove_category.category(class="form-control
                           form-control-lg") }} {{
                           form_add_remove_category.add_category(class="btn
                           btn-outline-secondary mt-4") }}
-                                                    {{form_add_remove_category.remove_category(class="btn
+                          {{form_add_remove_category.remove_category(class="btn
                           btn-outline-secondary mt-4") }}
                         </div>
 
@@ -236,8 +261,7 @@
                       >
                         {{ form_delete_note.hidden_tag() }}
                         <div class="d-flex flex-row justify-content-between">
-                          {{ form_delete_note.delete(class="btn
-                          btn-outline-secondary") }}
+                          {{ form_delete_note.delete(class="btn btn-danger") }}
                           <button class="btn btn-outline-secondary">No</button>
                         </div>
                         <input
@@ -252,11 +276,15 @@
                 </div>
               </div>
             </div>
-            {% endfor %}
+            {% endif %} 
+            {% endfor %} {% endfor %}
           </div>
         </div>
+        {# Add note form starts here #}
         <span class="add_note navbar sticky-bottom container float-end me-3">
-          <div class="dropup">
+          <div
+            class="{{'dropup' if user_notes[0] is defined == True else 'dropdown'}}"
+          >
             <button
               type="button"
               class="btn btn-outline-secondary d-flex"

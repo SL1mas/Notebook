@@ -52,32 +52,41 @@ block main %}
                 {% else %} {{ form_modify_category.new_title(class="form-control
                 form-control-lg", value=category.title) }} {% endif %}
               </div>
-              <div class="form-group text-start">
+              <div
+                class="form-group text-start d-flex flex-row justify-content-between"
+              >
                 {{
                 form_modify_category.submit_modified_category_data(class="mt-2
-                w-40 btn btn-primary") }}
-              </div>
-              <div class="dropdown">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                  data-bs-auto-close="outside"
-                >
-                  Delete
-                </button>
-                <form
-                  class="dropdown-menu p-4"
-                  style="width: 9rem"
-                  method="POST"
-                  action="{{ url_for('base') }} "
-                >
-                  <div class="d-flex flex-row justify-content-between">
-                    {{ form_modify_category.delete(class="btn
-                    btn-outline-secondary") }}
-                    <button class="btn btn-outline-secondary">No</button>
+                w-40 btn btn-primary") }} {# for keeping delete button style #}
+                <div class="dropdown">
+                  <form
+                    class="dropdown-menu p-4"
+                    style="width: 9rem"
+                    method="POST"
+                    action="{{ url_for('base') }} "
+                  ></form>
+                </div>
+                <div class="dropdown">
+                  <button
+                    type="button"
+                    class="mt-2 w-40 btn btn-primary dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                  >
+                    Delete
+                  </button>
+                  <div class="dropdown-menu p-4" style="width: 9rem">
+                    <div class="d-flex flex-row justify-content-between">
+                      {{ form_modify_category.delete(class="btn btn-danger") }}
+                      <button class="btn btn-primary">No</button>
+                      <input
+                        type="hidden"
+                        name="category_id"
+                        value="{{ category.id }}"
+                      />
+                    </div>
                   </div>
-                </form>
+                </div>
               </div>
               {% endif %} {% endfor %}
             </form>
