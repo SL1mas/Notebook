@@ -76,6 +76,9 @@
           <a
             href="{{ url_for('logout') }}"
             class="btn btn-sm btn-outline-secondary"
+            data-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="{{ current_user.first_name }}"
             >Logout
           </a>
         </div>
@@ -84,7 +87,7 @@
     {% block main %} {# Main starts here #}
     <main>
       <div class="album py-5 bg-light">
-        <div class="container">
+        <div class="container mt-3">
           <form method="POST" action="{{ url_for('base') }}">
             {{ form_modify_category.hidden_tag() }}
             <div
@@ -114,7 +117,6 @@
                   {% set filter_by_category = show_category %}
                   {% endif %}
                 {% if show_category == filter_by_category %}
-         
             <div class="col">
               <div class="card text-bg-light mb-3 card_body">
                 <div class="card-header">
@@ -127,7 +129,11 @@
                   <hr class="my-1" />
                   {% endif %}
                 </div>
-                <div class="card-body">
+                <div class="card-body d-flex">
+                                {% if note.picture != none %}
+                <img class="rounded-start me-2 img" src="{{ url_for('static', filename='/note_images/'+ 
+                note.picture|string())}}">
+                 {% endif %} 
                   <p class="card-text">
                     {{ note.text[:122] }}{% if note.text|length > 122 %}<a
                       data-bs-toggle="collapse"
@@ -137,7 +143,7 @@
                       >...</a
                     >{% endif %}
                     <span class="collapse" id="{{ note.id }}"
-                      >{{ note.text[100:] }}
+                      >{{ note.text[122:] }}
                     </span>
                   </p>
                 </div>
@@ -158,7 +164,8 @@
                         class="dropdown-menu p-4"
                         style="width: 21rem"
                         method="POST"
-                        action="{{ url_for('base') }} "
+                        action="{{ url_for('base') }}"
+                        enctype="multipart/form-data"
                       >
                         {{ form_edit_note.hidden_tag() }}
                         <div class="mb-3">
@@ -202,6 +209,15 @@
                           >
                           {% endif %}
                         </div>
+                        <div class="form-group">
+                         {{ form_edit_note.picture.label() }}
+                         {{ form_edit_note.picture(class="form-control-file mb-2") }}
+                         {% if form_edit_note.picture.errors %}
+                           {% for error in form_edit_note.picture.errors %}
+                             <span class="text-danger">{{ error }}</span>
+                           {% endfor %}
+                         {% endif %}
+            </div>
                         {{ form_edit_note.update(class="btn
                         btn-outline-secondary") }}
                         <input
@@ -313,7 +329,7 @@
             <form
               class="dropdown-menu dropdown-menu-start p-4 add_note_form"
               method="POST"
-              action="{{ url_for('base') }} "
+              action="{{ url_for('base') }}"
             >
               {{ form_add_note.hidden_tag() }}
               <div class="mb-3">

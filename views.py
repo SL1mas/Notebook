@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import app, db, login_manager, bcrypt
 import forms
 from models import User, Note, Category
+from utilities import save_picture
 
 
 @login_manager.user_loader
@@ -48,6 +49,7 @@ def login():
 @app.route("/base", methods=['GET', 'POST'])
 @login_required
 def base():
+    db.create_all()
     form_edit_note = forms.Edit_note_form()
     form_add_note = forms.Add_note_form()
     form_delete_note = forms.Delete_note_form()
@@ -55,6 +57,7 @@ def base():
     form_modify_category = forms.Modify_category_form()
     user_notes = Note.query.filter(Note.user_id == current_user.id)
     categories = Category.query.all()
+    notes = Note.query.all()
     note_id = request.values.get("note_id")
     user_id = request.values.get("user_id")
     new_note_text = request.values.get("form_edit_note")
@@ -96,11 +99,13 @@ def base():
         return redirect(url_for('base'))
 
     if form_edit_note.update.data and form_edit_note.validate():
+        if form_edit_note.picture.data:
+            picture = save_picture(form_edit_note.picture.data)
+            edit_note.picture = picture
         edit_note.title = form_edit_note.new_title.data
         edit_note.text = new_note_text
         db.session.commit()
-        flash(
-            f'"{edit_note.title}" note data was updated successfully!', 'success')
+        flash(f'"{edit_note.title}" note data was updated successfully!', 'success')
         return redirect(url_for('base'))
 
     if form_delete_note.delete.data and form_delete_note.validate():

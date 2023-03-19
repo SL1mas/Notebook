@@ -38,6 +38,8 @@ class Login_form(FlaskForm):
 class Edit_note_form(FlaskForm):
     new_title = StringField("Title:")
     new_text = TextAreaField("Text:")
+    picture = FileField("Add picture:", validators=[
+                        FileAllowed(['jpg', 'png'])])
     update = SubmitField("Save")
 
 

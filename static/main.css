@@ -12,7 +12,7 @@ main {
 
 .card_body {
   max-width: 22rem;
-  min-height: 16.1rem;
+  min-height: 19rem;
 }
 
 .add_note {
@@ -26,4 +26,9 @@ main {
 .add_note_form {
   width: 21rem;
   margin-left: -21rem;
+}
+
+.img {
+  max-width: 5rem;
+  max-height: 7rem !important;
 }
