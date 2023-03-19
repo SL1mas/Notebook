@@ -31,8 +31,7 @@
   <div class="alert alert-{{ category }} mb-0 mt-4 text-center">
     {{ message }}
   </div>
-  {% endfor %} {% endif %} {% endwith %}
-    {% block body %} 
+  {% endfor %} {% endif %} {% endwith %} {% block body %}
   <body class="body_style">
     <nav
       class="navbar fixed-top navbar-expand-sm"
@@ -64,12 +63,24 @@
           class="collapse navbar-collapse nav justify-content-end"
           id="navbar"
         >
-            {{ form_search.hidden_tag() }}
-      <form method="POST" action="{{ url_for('search') }}" class="d-flex" role="search">
-            {# {{ form_search.searched(class="form-control form-control-lg") }} #}
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
-        {{ form_search.submit(class="btn btn-outline-secondary") }}
-    </form>
+          {{ form_search.hidden_tag() }}
+          <form
+            method="POST"
+            action="{{ url_for('search') }}"
+            class="d-flex"
+            role="search"
+          >
+            {# {{ form_search.searched(class="form-control form-control-lg") }}
+            #}
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              name="searched"
+            />
+            {{ form_search.submit(class="btn btn-outline-secondary") }}
+          </form>
           <ul class="navbar-nav mx-5">
             <li class="nav-item text-center">
               <a
@@ -111,19 +122,13 @@
             </div>
           </form>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for note in user_notes %} 
-              {% set ns = namespace(number = 0) %}
-              {% if filter_by_category == none %}
-                {% set list = user_notes %}
-                {% else %}
-                {% set list = note.categories %}
-              {% endif %}
-              {% for show_category in list %} 
-                {% if filter_by_category == none and ns.number == 0  %}
-                  {% set ns.number = ns.number + 1 %}
-                  {% set filter_by_category = show_category %}
-                  {% endif %}
-                {% if show_category == filter_by_category %}
+            {% for note in user_notes %} {% set ns = namespace(number = 0) %} {%
+            if filter_by_category == none %} {% set list = user_notes %} {% else
+            %} {% set list = note.categories %} {% endif %} {% for show_category
+            in list %} {% if filter_by_category == none and ns.number == 0 %} {%
+            set ns.number = ns.number + 1 %} {% set filter_by_category =
+            show_category %} {% endif %} {% if show_category ==
+            filter_by_category %}
             <div class="col">
               <div class="card text-bg-light mb-3 card_body">
                 <div class="card-header">
@@ -137,10 +142,13 @@
                   {% endif %}
                 </div>
                 <div class="card-body d-flex">
-                                {% if note.picture != none %}
-                <img class="rounded-start me-2 img" src="{{ url_for('static', filename='/note_images/'+ 
-                note.picture|string())}}">
-                 {% endif %} 
+                  {% if note.picture != none %}
+                  <img
+                    class="rounded-start me-2 img"
+                    src="{{ url_for('static', filename='/note_images/'+ 
+                note.picture|string())}}"
+                  />
+                  {% endif %}
                   <p class="card-text">
                     {{ note.text[:122] }}{% if note.text|length > 122 %}<a
                       data-bs-toggle="collapse"
@@ -155,7 +163,7 @@
                   </p>
                 </div>
                 <div
-                  class="m-3 d-flex justify-content-between align-items-center"
+                  class="m-3 d-flex justify-content-center align-items-center"
                 >
                   <div class="btn-group">
                     <div class="dropdown">
@@ -217,14 +225,13 @@
                           {% endif %}
                         </div>
                         <div class="form-group">
-                         {{ form_edit_note.picture.label() }}
-                         {{ form_edit_note.picture(class="form-control-file mb-2") }}
-                         {% if form_edit_note.picture.errors %}
-                           {% for error in form_edit_note.picture.errors %}
-                             <span class="text-danger">{{ error }}</span>
-                           {% endfor %}
-                         {% endif %}
-            </div>
+                          {{ form_edit_note.picture.label() }} {{
+                          form_edit_note.picture(class="form-control-file mb-2")
+                          }} {% if form_edit_note.picture.errors %} {% for error
+                          in form_edit_note.picture.errors %}
+                          <span class="text-danger">{{ error }}</span>
+                          {% endfor %} {% endif %}
+                        </div>
                         {{ form_edit_note.update(class="btn
                         btn-outline-secondary") }}
                         <input
@@ -295,12 +302,10 @@
                       </form>
                     </div>
                   </div>
-                  <small class="text-muted">9 mins</small>
                 </div>
               </div>
             </div>
-            {% endif %} 
-            {% endfor %} {% endfor %}
+            {% endif %} {% endfor %} {% endfor %}
           </div>
         </div>
         {# Add note form starts here #}
@@ -374,36 +379,9 @@
         </span>
       </div>
       <footer
-        class="container d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"
+        class="container d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top"
       >
-        <p class="col-md-4 mb-0 text-muted">© 2022 Company, Inc</p>
-
-        <a
-          href="/"
-          class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
-        >
-          <svg class="bi me-2" width="40" height="32">
-            <use xlink:href="#bootstrap"></use>
-          </svg>
-        </a>
-
-        <ul class="nav col-md-4 justify-content-end">
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">Home</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">Features</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">FAQs</a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">About</a>
-          </li>
-        </ul>
+        <p class="text-muted">© 2023 Notebook, Inc</p>
       </footer>
     </main>
     {% endblock %} {% endblock %}

@@ -42,16 +42,14 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column("Title", db.String(256), nullable=False)
     text = db.Column("Text", db.String(2048), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     picture = db.Column("Picture", db.String(256))
     user_id = db.Column("User id", db.Integer, db.ForeignKey('Users.id'))
     user = db.relationship("User")
     categories = db.relationship(
         'Category', secondary=categories_notes, back_populates="notes")
 
-    def __init__(self, title, text, user_id, date=None, picture=None):
+    def __init__(self, title, text, user_id, picture=None):
         self.title = title
         self.text = text
-        self.date = date
         self.picture = picture
         self.user_id = user_id
