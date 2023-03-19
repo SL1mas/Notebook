@@ -57,7 +57,6 @@ def base():
     form_modify_category = forms.Modify_category_form()
     user_notes = Note.query.filter(Note.user_id == current_user.id)
     categories = Category.query.all()
-    notes = Note.query.all()
     note_id = request.values.get("note_id")
     user_id = request.values.get("user_id")
     new_note_text = request.values.get("form_edit_note")
@@ -164,6 +163,21 @@ def modify_category():
         return redirect(url_for('base'))
     return render_template('modify_category.html', form_modify_category=form_modify_category, categories=categories,
                            selected_category_id=selected_category_id)
+
+
+@app.context_processor
+def base():
+    form_search = forms.Search_form()
+    return dict(form_search=form_search)
+
+
+@app.route("/search", methods=['POST'])
+@login_required
+def search():
+    form_search = forms.Search_form()
+    searched = request.values.get("searched")
+    titles = Note.query.filter(Note.title.contains(searched))
+    return render_template('search.html', form_search=form_search, searched=searched, titles=titles)
 
 
 @ app.route("/logout", methods=['GET', 'POST'])

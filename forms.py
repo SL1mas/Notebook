@@ -73,3 +73,9 @@ class Add_remove_category_form(FlaskForm):
     category = QuerySelectMultipleField(query_factory=Category.query.all)
     add_category = SubmitField('Add')
     remove_category = SubmitField('Remove')
+
+
+class Search_form(FlaskForm):
+    # searched = StringField('Searched', [DataRequired()], render_kw={
+    #                        "placeholder": "Search", "type": "search", "aria-label": "Search"})
+    submit = SubmitField('Search')

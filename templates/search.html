@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% block title %}Search{% endblock %} {% block main %}
+<h3 class="m-5">Note tiles below contains word "{{ searched }}"</h3>
+<ol>
+  {% for title in titles %} {% if title.user_id == current_user.id %}
+  <li class="ms-5">{{ title.title }}</li>
+  <br />
+  {% endif %} {% endfor %}
+</ol>
+{% endblock %}
