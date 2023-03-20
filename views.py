@@ -55,7 +55,9 @@ def base():
     form_delete_note = forms.Delete_note_form()
     form_add_remove_category = forms.Add_remove_category_form()
     form_modify_category = forms.Modify_category_form()
-    user_notes = Note.query.filter(Note.user_id == current_user.id)
+    page = request.args.get("page", 1, type=int)
+    user_notes = Note.query.filter(
+        Note.user_id == current_user.id).paginate(page=page, per_page=3)
     categories = Category.query.all()
     note_id = request.values.get("note_id")
     user_id = request.values.get("user_id")
@@ -181,10 +183,20 @@ def search():
     return render_template('search.html', form_search=form_search, searched=searched, titles=titles)
 
 
-@ app.route("/logout", methods=['GET', 'POST'])
+@app.route("/logout", methods=['GET', 'POST'])
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.errorhandler(401)
+def unauthorized(error):
+    return render_template('unauthorized.html'), 401
+
+
+@ app.errorhandler(404)
+def not_found(error):
+    return render_template('not_found.html'), 404
 
 
 @ app.errorhandler(500)

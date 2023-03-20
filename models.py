@@ -1,6 +1,5 @@
 from app import db
 from flask_login import UserMixin
-from datetime import datetime
 
 categories_notes = db.Table('Categories_notes', db.metadata, db.Column('id', db.Integer, primary_key=True),
                             db.Column('Category_id', db.Integer,

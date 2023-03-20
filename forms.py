@@ -60,7 +60,7 @@ class Add_category_form(FlaskForm):
 
 
 class Modify_category_form(FlaskForm):
-    category = QuerySelectField(allow_blank=True, blank_text="Select project",
+    category = QuerySelectField(allow_blank=True, blank_text="Select category",
                                 query_factory=Category.query.all, validators=[DataRequired()])
     new_title = StringField("Title:", [DataRequired()], render_kw={
         "placeholder": "Category title"})

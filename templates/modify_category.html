@@ -12,10 +12,19 @@ block main %}
         <div class="card-header">
           <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('add_category') }}">Add</a>
+              <a
+                class="nav-link text-light bg-secondary"
+                href="{{ url_for('add_category') }}"
+                >Add</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="true" href="#">Modify</a>
+              <a
+                class="nav-link text-secondary active"
+                aria-current="true"
+                href="#"
+                >Modify</a
+              >
             </li>
           </ul>
         </div>
@@ -33,7 +42,7 @@ block main %}
                 form-control-lg") }}
                 <p class="mb-0">
                   {{ form_modify_category.select_category(class="w-40 btn
-                  btn-primary mb-0 mt-0 ms-2") }}
+                  btn-outline-secondary mb-0 mt-0 ms-2") }}
                 </p>
               </div>
               {% for category in categories %} {% if selected_category_id ==
@@ -57,7 +66,8 @@ block main %}
               >
                 {{
                 form_modify_category.submit_modified_category_data(class="mt-2
-                w-40 btn btn-primary") }} {# for keeping delete button style #}
+                w-40 btn btn-outline-secondary") }} {# for keeping delete button
+                style #}
                 <div class="dropdown">
                   <form
                     class="dropdown-menu p-4"
@@ -69,7 +79,7 @@ block main %}
                 <div class="dropdown">
                   <button
                     type="button"
-                    class="mt-2 w-40 btn btn-primary dropdown-toggle"
+                    class="mt-2 w-40 btn btn-outline-secondary dropdown-toggle"
                     data-bs-toggle="dropdown"
                     data-bs-auto-close="outside"
                   >
@@ -78,7 +88,7 @@ block main %}
                   <div class="dropdown-menu p-4" style="width: 9rem">
                     <div class="d-flex flex-row justify-content-between">
                       {{ form_modify_category.delete(class="btn btn-danger") }}
-                      <button class="btn btn-primary">No</button>
+                      <button class="btn btn-outline-secondary">No</button>
                       <input
                         type="hidden"
                         name="category_id"
