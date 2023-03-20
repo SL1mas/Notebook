@@ -175,8 +175,9 @@ def base():
 @login_required
 def search():
     form_search = forms.Search_form()
-    searched = request.values.get("searched")
-    titles = Note.query.filter(Note.title.contains(searched))
+    if form_search.submit.data and form_search.validate():
+        searched = form_search.searched.data
+        titles = Note.query.filter(Note.title.contains(searched))
     return render_template('search.html', form_search=form_search, searched=searched, titles=titles)
 
 

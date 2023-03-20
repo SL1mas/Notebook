@@ -63,23 +63,15 @@
           class="collapse navbar-collapse nav justify-content-end"
           id="navbar"
         >
-          {{ form_search.hidden_tag() }}
           <form
             method="POST"
             action="{{ url_for('search') }}"
             class="d-flex"
             role="search"
           >
-            {# {{ form_search.searched(class="form-control form-control-lg") }}
-            #}
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-              name="searched"
-            />
-            {{ form_search.submit(class="btn btn-outline-secondary") }}
+            {{ form_search.hidden_tag() }} {{
+            form_search.searched(class="form-control me-2") }} {{
+            form_search.submit(class="btn btn-outline-secondary") }}
           </form>
           <ul class="navbar-nav mx-5">
             <li class="nav-item text-center">
