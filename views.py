@@ -1,3 +1,4 @@
+import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app, db, login_manager, bcrypt
@@ -55,14 +56,17 @@ def base():
     form_delete_note = forms.Delete_note_form()
     form_add_remove_category = forms.Add_remove_category_form()
     form_modify_category = forms.Modify_category_form()
-    page = request.args.get("page", 1, type=int)
-    user_notes = Note.query.filter(
-        Note.user_id == current_user.id).paginate(page=page, per_page=3)
     categories = Category.query.all()
     note_id = request.values.get("note_id")
     user_id = request.values.get("user_id")
     new_note_text = request.values.get("form_edit_note")
     edit_note = Note.query.filter(Note.id == note_id).first()
+    if_user_has_notes = Note.query.filter(Note.user_id == current_user.id)
+
+    page = request.args.get("page", 1, type=int)
+    user_notes = Note.query.filter(
+        Note.user_id == current_user.id).paginate(page=page, per_page=6)
+    now = datetime.datetime.now()
 
     try:
         selected_category_id = form_modify_category.category.data.id
@@ -116,9 +120,9 @@ def base():
         flash(f'Note was deleted.', 'success')
         return redirect(url_for('base'))
     return render_template('base.html', user_notes=user_notes, categories=categories, form_edit_note=form_edit_note,
-                           form_add_note=form_add_note, form_delete_note=form_delete_note,
+                           form_add_note=form_add_note, form_delete_note=form_delete_note, now=now,
                            form_add_remove_category=form_add_remove_category, form_modify_category=form_modify_category,
-                           filter_by_category=filter_by_category)
+                           filter_by_category=filter_by_category, if_user_has_notes=if_user_has_notes)
 
 
 @app.route("/add_category", methods=['GET', 'POST'])

@@ -77,5 +77,5 @@ class Add_remove_category_form(FlaskForm):
 
 class Search_form(FlaskForm):
     searched = StringField('Searched', [DataRequired()], render_kw={
-                           "placeholder": "Search for title", "type": "search", "aria-label": "Search"})
+                           "placeholder": "Search for title", "type": "search", "aria-label": "Search", "style": "width: 10rem"})
     submit = SubmitField('Search')

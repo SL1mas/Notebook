@@ -38,7 +38,7 @@
       style="background-color: #e3f2fd"
       data-bs-theme="light"
     >
-      <div class="container-fluid">
+      <div class="container-fluid d-flex flex-row">
         <a class="navbar-brand" href="{{ url_for('base') }}">
           <img
             class="mb-1 ms-2"
@@ -48,47 +48,58 @@
             height="50"
           />
         </a>
+        <form
+          method="POST"
+          action="{{ url_for('search') }}"
+          class="d-flex"
+          role="search"
+        >
+          {{ form_search.hidden_tag() }} {{
+          form_search.searched(class="form-control me-2") }} {{
+          form_search.submit(class="btn btn-outline-secondary") }}
+        </form>
         <button
-          class="navbar-toggler"
+          class="navbar-toggler me-3"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbar"
           aria-controls="navbar"
           aria-expanded="false"
-          aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div
-          class="collapse navbar-collapse nav justify-content-end"
+          class="collapse navbar-collapse nav align-items-end justify-content-end flex-sm-row flex-column"
           id="navbar"
+          style="max-width: 15rem"
         >
-          <form
-            method="POST"
-            action="{{ url_for('search') }}"
-            class="d-flex"
-            role="search"
-          >
-            {{ form_search.hidden_tag() }} {{
-            form_search.searched(class="form-control me-2") }} {{
-            form_search.submit(class="btn btn-outline-secondary") }}
-          </form>
-          <ul class="navbar-nav mx-5">
-            <li class="nav-item text-center">
-              <a
-                class="nav-link"
-                aria-current="page"
-                href="{{ url_for('add_category') }}"
-                >Add/modify categories</a
-              >
-            </li>
-          </ul>
+          <li class="navbar-nav nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle show me-3"
+              href="#"
+              data-bs-toggle="dropdown"
+              aria-expanded="true"
+              >Categories</a
+            >
+            <ul class="dropdown-menu" data-bs-popper="static">
+              <li>
+                <a class="dropdown-item" href="{{ url_for('add_category') }}"
+                  >Add</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('modify_category') }}"
+                  >Modify</a
+                >
+              </li>
+            </ul>
+          </li>
           <a
             href="{{ url_for('logout') }}"
-            class="btn btn-outline-secondary"
+            class="btn btn-outline-secondary me-3"
             data-toggle="tooltip"
             data-bs-placement="bottom"
-            title="{{ current_user.first_name + ' will be loged out'}}"
+            title="{{ current_user.first_name + ' will be logged off'}}"
             >Logout
           </a>
         </div>
@@ -99,6 +110,7 @@
       <div class="album py-5 bg-light">
         <div class="container mt-3">
           {# For filter by category #}
+          <h5 class="mb-3">Filter by note category:</h5>
           <form method="POST" action="{{ url_for('base') }}">
             {{ form_modify_category.hidden_tag() }}
             <div
@@ -157,7 +169,9 @@
                   </p>
                 </div>
                 {# Edit note part starts here #}
-                <div class="m-3 d-flex justify-content-left align-items-left">
+                <div
+                  class="m-3 d-flex justify-content-between align-items-center"
+                >
                   <div class="btn-group">
                     <div class="dropup">
                       <button
@@ -299,49 +313,21 @@
                       </form>
                     </div>
                   </div>
+                  {% set delta = now - note.date %}
+                  <small class="text-muted"
+                    >{{ '{}h {}min'.format(delta.seconds//3600,
+                    (delta.seconds//60) % 60) }}</small
+                  >
                 </div>
               </div>
             </div>
             {% endif %} {% endfor %} {% endfor %}
           </div>
-          <nav>
-            <ul class="pagination justify-content-center">
-              <li
-                class="page-item {{ '' if user_notes.has_prev else 'disabled' }}"
-              >
-                <a
-                  class="page-link"
-                  href="{{ url_for('base', page=user_notes.prev_num) }}"
-                  ><span aria-hidden="true">&laquo;</span></a
-                >
-              </li>
-              {% for page_num in user_notes.iter_pages(left_edge=1,
-              right_edge=1, left_current=1, right_current=1) %} {% if page_num
-              %}
-              <li
-                class="page-item {{ 'active' if user_notes.page == page_num else '' }}"
-              >
-                <a class="page-link" href="{{ url_for('base', page=page_num) }}"
-                  >{{ page_num }}</a
-                >
-              </li>
-              {% endif %} {% endfor %}
-              <li
-                class="page-item {{ '' if user_notes.has_next else 'disabled' }}"
-              >
-                <a
-                  class="page-link"
-                  href="{{ url_for('base', page=user_notes.next_num) }}"
-                  ><span aria-hidden="true">&raquo;</span></a
-                >
-              </li>
-            </ul>
-          </nav>
         </div>
         {# Add note form starts here #}
         <span class="add_note navbar sticky-bottom container float-end me-3">
           <div
-            class="{{'dropup' if user_notes[0] is defined == True else 'dropdown'}}"
+            class="{{'dropup' if (if_user_has_notes[0] is defined) == True else 'dropdown'}}"
           >
             <button
               type="button"
@@ -407,6 +393,39 @@
             </form>
           </div>
         </span>
+        {# Pagination part #}
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li
+              class="page-item {{ '' if user_notes.has_prev else 'disabled' }}"
+            >
+              <a
+                class="page-link"
+                href="{{ url_for('base', page=user_notes.prev_num) }}"
+                ><span aria-hidden="true">&laquo;</span></a
+              >
+            </li>
+            {% for page_num in user_notes.iter_pages(left_edge=1, right_edge=1,
+            left_current=1, right_current=1) %} {% if page_num %}
+            <li
+              class="page-item {{ 'active' if user_notes.page == page_num else '' }}"
+            >
+              <a class="page-link" href="{{ url_for('base', page=page_num) }}"
+                >{{ page_num }}</a
+              >
+            </li>
+            {% endif %} {% endfor %}
+            <li
+              class="page-item {{ '' if user_notes.has_next else 'disabled' }}"
+            >
+              <a
+                class="page-link"
+                href="{{ url_for('base', page=user_notes.next_num) }}"
+                ><span aria-hidden="true">&raquo;</span></a
+              >
+            </li>
+          </ul>
+        </nav>
       </div>
       <footer
         class="container d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top"

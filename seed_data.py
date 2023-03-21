@@ -22,9 +22,31 @@ note11 = Note("This one is unusally long author probably wanted to show somethin
               "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
 note12 = Note("Even lnger then medium size title",
               "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note12 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note13 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note14 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note15 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note16 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note17 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note18 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note19 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note20 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note21 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
+note22 = Note("Even lnger then medium size title",
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, in quibusdam vero maxime voluptas minus ea ab placeat odio nam eos libero tenetur eius. Nulla excepturi esse adipisci quo tenetur.", 1)
 
-db.session.add_all([note1, note2, note3, note4, note5, note6,
-                   note7, note8, note9, note10, note11, note12])
+db.session.add_all([note1, note2, note3, note4, note5, note6, note7, note8, note9, note10, note11,
+                   note12, note13, note14, note15, note16, note17, note18, note19, note20, note21, note22])
 
 
 category1 = Category("Transport")
