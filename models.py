@@ -50,7 +50,8 @@ class Note(db.Model):
     categories = db.relationship(
         'Category', secondary=categories_notes, back_populates="notes")
 
-    def __init__(self, title, text, user_id):
+    def __init__(self, title, text, user_id, picture=None):
         self.title = title
         self.text = text
         self.user_id = user_id
+        self.picture = picture

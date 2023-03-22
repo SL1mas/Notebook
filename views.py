@@ -19,15 +19,19 @@ def register():
         return redirect(url_for('base'))
     form = forms.Registration_form()
     if form.validate_on_submit():
-        form.check_email(email=form.email)
-        encrypted_password = bcrypt.generate_password_hash(
-            form.password.data).decode('utf-8')
-        user = User(
-            first_name=form.name.data, email=form.email.data, password=encrypted_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('You have successfully registered!', 'success')
-        return redirect(url_for('login'))
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            flash('This email is used!!! Choose another.', 'danger')
+            return redirect(url_for('register'))
+        else:
+            encrypted_password = bcrypt.generate_password_hash(
+                form.password.data).decode('utf-8')
+            user = User(first_name=form.name.data,
+                        email=form.email.data, password=encrypted_password)
+            db.session.add(user)
+            db.session.commit()
+            flash('You have successfully registered!', 'success')
+            return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
 
@@ -76,13 +80,21 @@ def base():
         Category.id == selected_category_id).first()
 
     if form_add_note.save.data and form_add_note.validate():
-        note = Note(title=form_add_note.title.data,
-                    text=form_add_note.text.data, user_id=user_id)
+        if form_add_note.picture.data:
+            picture = save_picture(form_add_note.picture.data)
+            note = Note(title=form_add_note.title.data,
+                        text=form_add_note.text.data, picture=picture, user_id=user_id)
+        else:
+            note = Note(title=form_add_note.title.data,
+                        text=form_add_note.text.data, user_id=user_id)
+        for category in form_add_note.category.data:
+            category = Category.query.get(category.id)
+            note.categories.append(category)
         db.session.add(note)
         db.session.commit()
         flash(
             f'New note "{note.title}" was saved successfully!', 'success')
-        return redirect(url_for('base'))
+        return redirect(request.url)
 
     if form_add_remove_category.add_category.data and form_add_remove_category.validate():
         for category in form_add_remove_category.category.data:
@@ -91,7 +103,7 @@ def base():
             db.session.commit()
         flash(
             f'Note "{edit_note.title}" category list was updated.', 'success')
-        return redirect(url_for('base'))
+        return redirect(request.url)
 
     if form_add_remove_category.remove_category.data and form_add_remove_category.validate():
         for category in form_add_remove_category.category.data:
@@ -101,7 +113,7 @@ def base():
                     edit_note.categories.remove(category)
                     db.session.commit()
         flash(f'Note "{edit_note.title}" category list was updated.', 'success')
-        return redirect(url_for('base'))
+        return redirect(request.url)
 
     if form_edit_note.update.data and form_edit_note.validate():
         if form_edit_note.picture.data:
@@ -111,14 +123,14 @@ def base():
         edit_note.text = new_note_text
         db.session.commit()
         flash(f'"{edit_note.title}" note data was updated successfully!', 'success')
-        return redirect(url_for('base'))
+        return redirect(request.url)
 
     if form_delete_note.delete.data and form_delete_note.validate():
         Note.query.filter(Note.id == note_id).delete()
         edit_note.categories = []
         db.session.commit()
         flash(f'Note was deleted.', 'success')
-        return redirect(url_for('base'))
+        return redirect(request.url)
     return render_template('base.html', user_notes=user_notes, categories=categories, form_edit_note=form_edit_note,
                            form_add_note=form_add_note, form_delete_note=form_delete_note, now=now,
                            form_add_remove_category=form_add_remove_category, form_modify_category=form_modify_category,

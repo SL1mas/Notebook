@@ -1,4 +1,5 @@
 from flask_login import current_user
+from flask import flash, redirect, url_for
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, DateField, TextAreaField, PasswordField, \
@@ -18,13 +19,6 @@ class Registration_form(FlaskForm):
     verified_password = PasswordField("Repeat password", [
         EqualTo('password', "The password must match.")], render_kw={"placeholder": ""})
     submit = SubmitField('Register')
-
-    def check_email(self, email):
-        user = User.query.filter_by(
-            email=email.data).first()
-        if user:
-            raise ValidationError(
-                'This email is used!!! Choose another.')
 
 
 class Login_form(FlaskForm):
@@ -46,6 +40,9 @@ class Edit_note_form(FlaskForm):
 class Add_note_form(FlaskForm):
     title = StringField("Title:")
     text = TextAreaField("Text:")
+    category = QuerySelectMultipleField(query_factory=Category.query.all)
+    picture = FileField("Add picture:", validators=[
+                        FileAllowed(['jpg', 'png'])])
     save = SubmitField("Save")
 
 

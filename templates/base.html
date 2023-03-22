@@ -186,7 +186,7 @@
                         class="dropdown-menu p-4"
                         style="width: 21rem"
                         method="POST"
-                        action="{{ url_for('base') }}"
+                        action="{{ request.url }}"
                         enctype="multipart/form-data"
                       >
                         {{ form_edit_note.hidden_tag() }}
@@ -231,8 +231,7 @@
                           >
                           {% endif %}
                         </div>
-                        {# Only in edit section below, note picture can be added
-                        #}
+                        {# Edit note picture form #}
                         <div class="form-group">
                           {{ form_edit_note.picture.label() }} {{
                           form_edit_note.picture(class="form-control-file mb-2")
@@ -263,7 +262,7 @@
                       <form
                         class="dropdown-menu p-4"
                         method="POST"
-                        action="{{ url_for('base') }} "
+                        action="{{ request.url }} "
                       >
                         {{ form_add_remove_category.hidden_tag() }}
                         <div class="form-group text-start mb-2 add_category">
@@ -298,7 +297,7 @@
                         class="dropdown-menu p-4"
                         style="width: 9rem"
                         method="POST"
-                        action="{{ url_for('base') }} "
+                        action="{{ request.url }} "
                       >
                         {{ form_delete_note.hidden_tag() }}
                         <div class="d-flex flex-row justify-content-between">
@@ -357,9 +356,12 @@
             <form
               class="dropdown-menu dropdown-menu-start p-4 add_note_form"
               method="POST"
-              action="{{ url_for('base') }}"
+              action="{{ request.url }}"
+              enctype="multipart/form-data"
             >
               {{ form_add_note.hidden_tag() }}
+              <div class="d-flex">
+              <div class="flex-column">
               <div class="mb-3">
                 {{ form_add_note.title.label(class="form-control-label") }} {%
                 if form_add_note.title.errors %} {{ form_add_note.title(
@@ -384,7 +386,31 @@
                 {% else %} {{ form_add_note.text(class="form-control
                 form-control-lg", value="") }} {% endif %}
               </div>
-              {{ form_add_note.save(class="btn btn-outline-secondary") }}
+              <div class="form-group mt-4">
+                          {{ form_add_note.picture.label() }} {{
+                          form_add_note.picture(class="form-control-file")
+                          }} {% if form_add_note.picture.errors %} {% for error
+                          in form_add_note.picture.errors %}
+                          <span class="text-danger">{{ error }}</span>
+                          {% endfor %} {% endif %}
+                        </div>
+              </div>
+              <div class="flex-column ms-3">
+                      <form
+                        class="dropdown-menu p-4"
+                        method="POST"
+                        action="{{ url_for('base') }} "
+                      >
+                        {{ form_add_remove_category.hidden_tag() }}
+                        <div class="form-group text-start add_category">
+                          <p>Assign categories:</p>
+                          {{
+                          form_add_remove_category.category(class="form-control
+                          form-control-lg") }}
+                        </div>
+              {{ form_add_note.save(class="btn btn-outline-secondary float-end mt-5") }}
+              </div>
+              </div>
               <input
                 type="hidden"
                 name="user_id"
