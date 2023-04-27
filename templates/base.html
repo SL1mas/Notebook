@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+      integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="../static/main.css" />
+    <title>{% block title %} Main {% endblock %}</title>
+  </head>
+  {% block head %} {% with messages = get_flashed_messages(with_categories=true)
+  %} {% if messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }} mb-0 mt-4 text-center">
+    {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %} {% block body %}
+  <body class="body_style">
+    <nav
+      class="navbar fixed-top navbar-expand-sm"
+      style="background-color: #e3f2fd"
+      data-bs-theme="light"
+    >
+      <div class="container-fluid d-flex flex-row">
+        <a class="navbar-brand" href="{{ url_for('base') }}">
+          <img
+            class="mb-1 ms-2"
+            src="/static/logo.png"
+            alt="Logo"
+            width="50"
+            height="50"
+          />
+        </a>
+        <form
+          method="POST"
+          action="{{ url_for('search') }}"
+          class="d-flex"
+          role="search"
+        >
+          {{ form_search.hidden_tag() }} {{
+          form_search.searched(class="form-control me-2") }} {{
+          form_search.submit(class="btn btn-outline-secondary") }}
+        </form>
+        <button
+          class="navbar-toggler me-3"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar"
+          aria-controls="navbar"
+          aria-expanded="false"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse nav align-items-end justify-content-end flex-sm-row flex-column"
+          id="navbar"
+          style="max-width: 15rem"
+        >
+          <li class="navbar-nav nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle show me-3"
+              href="#"
+              data-bs-toggle="dropdown"
+              aria-expanded="true"
+              >Categories</a
+            >
+            <ul class="dropdown-menu" data-bs-popper="static">
+              <li>
+                <a class="dropdown-item" href="{{ url_for('add_category') }}"
+                  >Add</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('modify_category') }}"
+                  >Modify</a
+                >
+              </li>
+            </ul>
+          </li>
+          <a
+            href="{{ url_for('logout') }}"
+            class="btn btn-outline-secondary me-3"
+            data-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="{{ current_user.first_name + ' will be logged off'}}"
+            >Logout
+          </a>
+        </div>
+      </div>
+    </nav>
+    {% block main %} {# Main starts here #}
+    <main>
+      <div class="album py-5 bg-light">
+        <div class="container mt-3">
+          {# For filter by category #}
+          <h5 class="mb-3">Filter by note category:</h5>
+          <form method="POST" action="{{ url_for('base') }}">
+            {{ form_modify_category.hidden_tag() }}
+            <div
+              class="form-group text-start d-flex no-wrap align-items-center mb-2"
+            >
+              <div class="d-flex flex-row align-items-center mb-3">
+                {{ form_modify_category.category(class="form-control
+                form-control-lg") }}
+                <p class="mb-0">
+                  {{ form_modify_category.select_category(class="w-40 btn
+                  btn-outline-secondary mb-0 mt-0 ms-2") }}
+                </p>
+              </div>
+            </div>
+          </form>
+          {# Notes are rendered here #}
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for note in user_notes %} {% set ns = namespace(number = 0) %} {%
+            if filter_by_category == none %} {% set list = user_notes %} {% else
+            %} {% set list = note.categories %} {% endif %} {% for show_category
+            in list %} {% if filter_by_category == none and ns.number == 0 %} {%
+            set ns.number = ns.number + 1 %} {% set filter_by_category =
+            show_category %} {% endif %} {% if show_category ==
+            filter_by_category %}
+            <div class="col">
+              <div class="card text-bg-light mb-3 card_body">
+                <div class="card-header">
+                  <h5>{{ note.title }}</h5>
+                </div>
+                <div class="mx-3 pt-1">
+                  {% for category in note.categories %}
+                  <span class="badge bg-secondary">{{ category }}</span>
+                  {% endfor %} {% if note.categories|length > 0 %}
+                  <hr class="my-1" />
+                  {% endif %}
+                </div>
+                <div class="card-body d-flex">
+                  {% if note.picture != none %}
+                  <img
+                    class="rounded-start me-2 img"
+                    src="{{ url_for('static', filename='/note_images/'+ 
+                note.picture|string())}}"
+                  />
+                  {% endif %} {# For note text extention #}
+                  <p class="card-text">
+                    {{ note.text[:122] }}{% if note.text|length > 122 %}<a
+                      data-bs-toggle="collapse"
+                      href="#{{ note.id }}"
+                      role="button"
+                      aria-expanded="false"
+                      >...</a
+                    >{% endif %}
+                    <span class="collapse" id="{{ note.id }}"
+                      >{{ note.text[122:] }}
+                    </span>
+                  </p>
+                </div>
+                {# Edit note part starts here #}
+                <div
+                  class="m-3 d-flex justify-content-between align-items-center"
+                >
+                  <div class="btn-group">
+                    <div class="dropup">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Edit
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        style="width: 21rem"
+                        method="POST"
+                        action="{{ request.url }}"
+                        enctype="multipart/form-data"
+                      >
+                        {{ form_edit_note.hidden_tag() }}
+                        <div class="mb-3">
+                          {{
+                          form_edit_note.new_title.label(class="form-control-label")
+                          }} {% if form_edit_note.new_title.errors %} {{
+                          form_edit_note.new_title( class="form-control
+                          form-control-lg is-invalid", value=note.title) }}
+                          <div class="invalid-feedback text-start">
+                            {% for error in form_edit_note.new_title.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% else %} {{
+                          form_edit_note.new_title(class="form-control
+                          form-control-lg", value=note.title) }} {% endif %}
+                        </div>
+                        <div class="mb-3">
+                          {{
+                          form_edit_note.new_text.label(class="form-control-label")
+                          }} {% if form_edit_note.new_text.errors %}
+                          <textarea
+                            id="form_edit_note"
+                            name="form_edit_note"
+                            class="form-control form-control-lg is-invalid"
+                          >
+{{ note.text }}</textarea
+                          >
+                          <div class="invalid-feedback text-start">
+                            {% for error in form_edit_note.new_text.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% else %}
+                          <textarea
+                            id="form_edit_note"
+                            name="form_edit_note"
+                            class="form-control form-control-lg"
+                          >
+{{ note.text }}</textarea
+                          >
+                          {% endif %}
+                        </div>
+                        {# Edit note picture form #}
+                        <div class="form-group">
+                          {{ form_edit_note.picture.label() }} {{
+                          form_edit_note.picture(class="form-control-file mb-2")
+                          }} {% if form_edit_note.picture.errors %} {% for error
+                          in form_edit_note.picture.errors %}
+                          <span class="text-danger">{{ error }}</span>
+                          {% endfor %} {% endif %}
+                        </div>
+                        {{ form_edit_note.update(class="btn
+                        btn-outline-secondary") }}
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
+                      </form>
+                    </div>
+                    {# Add/remove note category part statrt here #}
+                    <div class="dropup">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Categories
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        method="POST"
+                        action="{{ request.url }} "
+                      >
+                        {{ form_add_remove_category.hidden_tag() }}
+                        <div class="form-group text-start mb-2 add_category">
+                          <p>Assign categories:</p>
+                          {{
+                          form_add_remove_category.category(class="form-control
+                          form-control-lg") }} {{
+                          form_add_remove_category.add_category(class="btn
+                          btn-outline-secondary mt-4") }}
+                          {{form_add_remove_category.remove_category(class="btn
+                          btn-outline-secondary mt-4") }}
+                        </div>
+
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
+                      </form>
+                    </div>
+                    {# Delete note part starts here #}
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside"
+                      >
+                        Delete
+                      </button>
+                      <form
+                        class="dropdown-menu p-4"
+                        style="width: 9rem"
+                        method="POST"
+                        action="{{ request.url }} "
+                      >
+                        {{ form_delete_note.hidden_tag() }}
+                        <div class="d-flex flex-row justify-content-between">
+                          {{ form_delete_note.delete(class="btn btn-danger") }}
+                          <button class="btn btn-outline-secondary">No</button>
+                        </div>
+                        <input
+                          type="hidden"
+                          name="note_id"
+                          value="{{ note.id }}"
+                        />
+                      </form>
+                    </div>
+                  </div>
+                  {% set delta = now - note.date %}
+                  <small class="text-muted"
+                    >{{ '{}h {}min'.format(delta.seconds//3600,
+                    (delta.seconds//60) % 60) }}</small
+                  >
+                </div>
+              </div>
+            </div>
+            {% endif %} {% endfor %} {% endfor %}
+          </div>
+        </div>
+        {# Add note form starts here #}
+        <span class="add_note navbar sticky-bottom container float-end me-3">
+          <div
+            class="{{'dropup' if (if_user_has_notes[0] is defined) == True else 'dropdown'}}"
+          >
+            <button
+              type="button"
+              class="btn btn-outline-secondary d-flex"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              data-toggle="tooltip"
+              data-bs-placement="left"
+              title="Add note"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                class="bi bi-plus-circle"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                ></path>
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                ></path>
+              </svg>
+            </button>
+            <form
+              class="dropdown-menu dropdown-menu-start p-4 add_note_form"
+              method="POST"
+              action="{{ request.url }}"
+              enctype="multipart/form-data"
+            >
+              {{ form_add_note.hidden_tag() }}
+              <div class="d-flex">
+              <div class="flex-column">
+              <div class="mb-3">
+                {{ form_add_note.title.label(class="form-control-label") }} {%
+                if form_add_note.title.errors %} {{ form_add_note.title(
+                class="form-control form-control-lg is-invalid", value="") }}
+                <div class="invalid-feedback text-start">
+                  {% for error in form_add_note.title.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %} {{ form_add_note.title(class="form-control
+                form-control-lg", value="") }} {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ form_add_note.text.label(class="form-control-label") }} {% if
+                form_add_note.text.errors %} {{ form_add_note.text(
+                class="form-control form-control-lg is-invalid",value="") }}
+                <div class="invalid-feedback text-start">
+                  {% for error in form_add_note.text.errors %}
+                  <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+                {% else %} {{ form_add_note.text(class="form-control
+                form-control-lg", value="") }} {% endif %}
+              </div>
+              <div class="form-group mt-4">
+                          {{ form_add_note.picture.label() }} {{
+                          form_add_note.picture(class="form-control-file")
+                          }} {% if form_add_note.picture.errors %} {% for error
+                          in form_add_note.picture.errors %}
+                          <span class="text-danger">{{ error }}</span>
+                          {% endfor %} {% endif %}
+                        </div>
+              </div>
+              <div class="flex-column ms-3">
+                      <form
+                        class="dropdown-menu p-4"
+                        method="POST"
+                        action="{{ url_for('base') }} "
+                      >
+                        {{ form_add_remove_category.hidden_tag() }}
+                        <div class="form-group text-start add_category">
+                          <p>Assign categories:</p>
+                          {{
+                          form_add_remove_category.category(class="form-control
+                          form-control-lg") }}
+                        </div>
+              {{ form_add_note.save(class="btn btn-outline-secondary float-end mt-5") }}
+              </div>
+              </div>
+              <input
+                type="hidden"
+                name="user_id"
+                value="{{ current_user.id }}"
+              />
+            </form>
+          </div>
+        </span>
+        {# Pagination part #}
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li
+              class="page-item {{ '' if user_notes.has_prev else 'disabled' }}"
+            >
+              <a
+                class="page-link"
+                href="{{ url_for('base', page=user_notes.prev_num) }}"
+                ><span aria-hidden="true">&laquo;</span></a
+              >
+            </li>
+            {% for page_num in user_notes.iter_pages(left_edge=1, right_edge=1,
+            left_current=1, right_current=1) %} {% if page_num %}
+            <li
+              class="page-item {{ 'active' if user_notes.page == page_num else '' }}"
+            >
+              <a class="page-link" href="{{ url_for('base', page=page_num) }}"
+                >{{ page_num }}</a
+              >
+            </li>
+            {% endif %} {% endfor %}
+            <li
+              class="page-item {{ '' if user_notes.has_next else 'disabled' }}"
+            >
+              <a
+                class="page-link"
+                href="{{ url_for('base', page=user_notes.next_num) }}"
+                ><span aria-hidden="true">&raquo;</span></a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <footer
+        class="container d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top"
+      >
+        <p class="text-muted">© 2023 Notebook, Inc</p>
+      </footer>
+    </main>
+    {% endblock %} {% endblock %} {% endblock %}
+    <script>
+      $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
+  </body>
+</html>

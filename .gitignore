@@ -1,0 +1,8 @@
+venv/
+pvz/
+app/
+__pycache__/
+
+# Ignore .env files
+.env
+.env.local

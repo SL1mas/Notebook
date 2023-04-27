@@ -1,0 +1,58 @@
+/* Show it is fixed to the top */
+.body_style {
+  padding-top: 3.5rem;
+}
+main {
+  margin: 0.5rem;
+}
+
+.extend_background {
+  height: 40rem;
+}
+
+.card_body {
+  max-width: 22rem;
+  min-height: 19rem;
+}
+
+.add_note {
+  width: 4rem;
+}
+
+.add_category {
+  width: 14.3rem;
+}
+
+.add_note_form {
+  width: 42rem;
+  margin-left: -42rem;
+}
+
+.img {
+  max-width: 5rem;
+  max-height: 7rem !important;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5rem;
+  width: 30%;
+}
+
+.page-link {
+  background-color: var(--bs-btn-bg);
+}
+
+.pagination {
+  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --bs-pagination-active-color: #fff;
+  --bs-pagination-active-bg: #6c757d;
+  --bs-pagination-active-border-color: #6c757d;
+  --bs-pagination-hover-color: #fff;
+  --bs-pagination-hover-bg: #6c757d;
+  --bs-pagination-hover-border-color: #6c757d;
+  --bs-pagination-color: #6c757d;
+  --bs-pagination-border-color: #6c757d;
+}
